@@ -8,7 +8,7 @@
 }
 @media (prefers-color-scheme: light) {
   :root { --bg: #f7f3ea; --panel: #fffdf8; --ink: #1d1a14; --dim: rgba(29, 26, 20, .66);
-    --faint: rgba(29, 26, 20, .42); --hair: rgba(29, 26, 20, .12); --accent: #a86a00;
+    --faint: rgba(29, 26, 20, .65); --hair: rgba(29, 26, 20, .12); --accent: #a86a00;
     --ok: #2d7a3e; --err: #a3321f; color-scheme: light; }
 }
 * { box-sizing: border-box; }
