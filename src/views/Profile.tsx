@@ -33,6 +33,7 @@ export function ProfileView({ client, username, go }: {
       const r = await client.connect(p.username)
       setNote(r.message)
     } else if (action.kind === 'message') go('#/messages')
+    else if (action.kind === 'edit' && client.mode === 'sample') setNote('This is a sample profile. Sign in to edit yours.')
     else if (action.kind === 'edit') window.open('https://app.aitherium.com/spaces/' + encodeURIComponent(p.username), '_blank', 'noopener')
   }
   return (
