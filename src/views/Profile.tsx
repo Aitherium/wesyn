@@ -15,6 +15,7 @@ export function ProfileView({ client, username, go }: {
 }) {
   const [res, setRes] = useState<ProfileResult | null>(null)
   const [note, setNote] = useState('')
+  const [copied, setCopied] = useState(false)
   useEffect(() => {
     let live = true
     setRes(null); setNote('')
@@ -36,6 +37,16 @@ export function ProfileView({ client, username, go }: {
     else if (action.kind === 'edit' && client.mode === 'sample') setNote('This is a sample profile. Sign in to edit yours.')
     else if (action.kind === 'edit') window.open('https://app.aitherium.com/spaces/' + encodeURIComponent(p.username), '_blank', 'noopener')
   }
+  const copyLink = async () => {
+    const url = `https://aitherium.github.io/wesyn/#/u/${encodeURIComponent(p.username)}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      setNote('Could not copy link.')
+    }
+  }
   return (
     <article className="stack" aria-label={`Profile of ${p.displayName}`}>
       <header className="card hero">
@@ -48,6 +59,7 @@ export function ProfileView({ client, username, go }: {
         <button className="primary" onClick={act} disabled={action.kind === 'pending' || action.kind === 'signin'}>
           {action.label}
         </button>
+        <button className="link" onClick={copyLink} type="button">{copied ? 'Copied!' : 'Copy link'}</button>
       </header>
       {note && <p className="dim" role="status">{note}</p>}
       {p.bio && <section className="card"><h2>About</h2><p>{p.bio}</p></section>}
