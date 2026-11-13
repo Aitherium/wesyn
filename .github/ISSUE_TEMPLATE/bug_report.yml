@@ -1,0 +1,8 @@
+name: Bug
+description: Something does not work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: "Steps, what you expected, what you saw. Sample or signed in?" }
+    validations: { required: true }

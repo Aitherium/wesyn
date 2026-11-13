@@ -1,0 +1,13 @@
+Wesyn
+Copyright (C) 2026 Aitherium and the Wesyn contributors.
+
+Licensed under the GNU Affero General Public License, version 3 only (see LICENSE).
+
+The social data model (profiles, endorsements, work history, connection requests,
+posts, groups) follows ShlinkedIn, https://github.com/cbh123/shlinked, which is
+licensed under the GNU Affero General Public License, version 3. Wesyn ports the
+shape of that model to TypeScript; it does not copy ShlinkedIn's Elixir source,
+its satire content or its joke mechanics. See docs/shlinked-intake.md.
+
+"Wesyn" and the Wesyn mark are not licensed under the AGPL. Forks are welcome under
+the licence; please give them a different name.

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/api/helpers.ts","./src/api/live.test.ts","./src/api/live.ts","./src/api/sample.test.ts","./src/api/sample.ts","./src/api/types.ts","./src/auth/oidc.test.ts","./src/auth/oidc.ts","./src/views/lists.tsx","./src/views/profile.tsx"],"version":"5.6.3"}

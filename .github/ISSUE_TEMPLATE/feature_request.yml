@@ -1,0 +1,8 @@
+name: Feature
+description: Something Wesyn should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What and why, description: "Who it is for, and how you would know it works." }
+    validations: { required: true }
