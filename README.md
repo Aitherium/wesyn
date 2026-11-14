@@ -47,7 +47,7 @@ Without a token the app uses `SampleClient` (`src/api/sample.ts`). With one it u
 `LiveClient` (`src/api/live.ts`). Both implement `NetworkClient` (`src/api/types.ts`),
 so every screen is the same code in both modes.
 
-More: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+More: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). LinkedIn interop (sign-in, import from your own data export, opt-in sharing, JobPosting JSON-LD, and why no LinkedIn SDK is used): [docs/linkedin-interop.md](docs/linkedin-interop.md).
 
 ## Run it
 
