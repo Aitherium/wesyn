@@ -65,3 +65,9 @@ button, .link { font: 600 13px system-ui, sans-serif; border-radius: 10px; paddi
 .linkish { background: none; border: 0; padding: 0 4px; color: var(--accent); font: inherit; text-decoration: underline; }
 .foot { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--hair); font-size: 12px; color: var(--faint); }
 @media (max-width: 520px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+textarea, select { background: var(--panel); color: var(--ink); border: 1px solid var(--hair); border-radius: 10px;
+  padding: 9px 12px; font: inherit; }
+textarea { width: 100%; resize: vertical; margin-bottom: 10px; }
+.row.wrap { flex-wrap: wrap; align-items: center; }
+.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--dim); flex: 1; min-width: 200px; }
+.clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }

@@ -1,6 +1,7 @@
 // A member's profile: earned standing, proved identity, connections. AGPL-3.0-only.
 import { useEffect, useState } from 'react'
 import { profileAction } from '../api/helpers'
+import { loadImport } from './Import'
 import type { NetworkClient, Profile as P, ProfileResult } from '../api/types'
 
 const GATE_TEXT: Record<string, string> = {
@@ -65,6 +66,7 @@ export function ProfileView({ client, username, go }: {
       {p.bio && <section className="card"><h2>About</h2><p>{p.bio}</p></section>}
       <Standing p={p} />
       <Engineering p={p} />
+      {p.relationship === 'self' && <Imported />}
       {p.work.length > 0 && (
         <section className="card"><h2>Work</h2>
           <ul className="rows">{p.work.map(w => (
@@ -128,6 +130,22 @@ function Engineering({ p }: { p: P }) {
           <li key={c.name}>{c.name} · {c.issuer} <span className={`tag ${c.provenance === 'claimed' ? '' : 'ok'}`}>{c.provenance}</span></li>
         ))}
       </ul>
+    </section>
+  )
+}
+
+/** The member's own import, kept on this device only, shown as CLAIMED (not earned). */
+function Imported() {
+  const imp = loadImport()
+  if (!imp || (!imp.positions.length && !imp.skills.length)) return null
+  return (
+    <section className="card" aria-label="Imported, claimed">
+      <h2>From your import <span className="tag">claimed</span></h2>
+      <ul className="rows">{imp.positions.slice(0, 5).map((w, i) => (
+        <li key={i}><b>{w.title}</b> · {w.company}<span className="mono dim"> {w.from}{w.to ? `–${w.to}` : '–now'}</span></li>
+      ))}</ul>
+      {imp.skills.length > 0 && <ul className="chips">{imp.skills.slice(0, 15).map(s => <li key={s}>{s}</li>)}</ul>}
+      <p className="fine">Kept on this device only. <a href="#/import">Manage</a></p>
     </section>
   )
 }

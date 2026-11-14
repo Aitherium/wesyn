@@ -6,12 +6,14 @@ import type { NetworkClient, Viewer } from './api/types'
 import { DEFAULT_OIDC, authorizeUrl, handleCallback, readToken, signOut } from './auth/oidc'
 import { FeedView, MessagesView, PeopleView, PlanetsView } from './views/Lists'
 import { ProfileView } from './views/Profile'
+import { ImportView } from './views/Import'
+import { JobsView } from './views/Jobs'
 
 export const API_BASE = 'https://api.aitherium.com'
 const USERINFO = `${DEFAULT_OIDC.issuer}/oidc/userinfo`
 
 const TABS = [
-  ['#/', 'feed'], ['#/people', 'people'], ['#/planets', 'planets'], ['#/messages', 'messages'],
+  ['#/', 'feed'], ['#/people', 'people'], ['#/planets', 'planets'], ['#/messages', 'messages'], ['#/jobs', 'jobs'], ['#/import', 'import'],
 ] as const
 
 function useHash(): [string, (h: string) => void] {
@@ -86,6 +88,8 @@ export default function App() {
           : route === '/people' ? <PeopleView client={client} go={go} />
           : route === '/planets' ? <PlanetsView client={client} />
           : route === '/messages' ? <MessagesView client={client} />
+          : route === '/jobs' ? <JobsView client={client} />
+          : route === '/import' ? <ImportView />
           : route === '/' ? <FeedView client={client} />
           : <p className="err" role="alert">No such page. <a href="#/">Back to the feed</a></p>}
       </main>

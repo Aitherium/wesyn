@@ -124,4 +124,11 @@ export class SampleClient implements NetworkClient {
   async connect() {
     return { ok: false, message: 'This is the sample demo. Sign in with Aitherium to connect for real.' }
   }
+  async post() { return { ok: false, message: 'Sample demo: nothing was posted. Sign in to post.' } }
+  async shareStatus() {
+    return { available: true, connected: false, postsLeftToday: 2, postsPerDay: 2,
+      reason: 'Sample demo: sign in to connect your own account.' }
+  }
+  async shareConnectUrl() { return { ok: false, message: 'Sign in first.' } }
+  async shareToLinkedIn() { return { ok: false, message: 'Sample demo: nothing was shared.' } }
 }
