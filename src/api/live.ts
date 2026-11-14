@@ -7,8 +7,8 @@
 // never a cached card, a directory row or a guess.
 import { mergeFeed, pickFeedChannels, plainText, profileGate, type RelayChannel } from './helpers'
 import type {
-  CommunityStanding, NetworkClient, People, Planet, Post, Profile, ProfileResult, Relationship,
-  Viewer,
+  CommunityStanding, NetworkClient, Outcome, People, Planet, Post, Profile, ProfileResult,
+  Relationship, ShareStatus, Viewer,
 } from './types'
 
 export interface LiveConfig {
@@ -171,5 +171,52 @@ export class LiveClient implements NetworkClient {
     if (r.ok) return { ok: true, message: 'Request sent.' }
     const d = await json<{ detail?: string }>(r)
     return { ok: false, message: typeof d?.detail === 'string' ? d.detail : `The server answered ${r.status}.` }
+  }
+
+  private postJson(path: string, body: unknown): Promise<Response> {
+    return this.f(this.cfg.apiBase + path, {
+      method: 'POST', credentials: 'omit',
+      headers: { Authorization: `Bearer ${this.cfg.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+  }
+
+  private async outcome(r: Response, ok: string): Promise<Outcome> {
+    if (r.ok) return { ok: true, message: ok }
+    const d = await json<{ detail?: unknown }>(r)
+    const plan = r.status === 403 ? ' (this may need a paid plan)' : ''
+    return { ok: false, message: typeof d?.detail === 'string' ? d.detail : `The server answered ${r.status}${plan}.` }
+  }
+
+  async post(room: string, text: string): Promise<Outcome> {
+    const me = await this.viewer()
+    if (!me) return { ok: false, message: 'Sign in again.' }
+    const r = await this.postJson(`/api/relay/v1/channels/${encodeURIComponent(room.replace(/^#/, ''))}/messages`,
+      { nick: me.username, content: text })
+    return this.outcome(r, `Posted to ${room}.`)
+  }
+
+  async shareStatus(): Promise<ShareStatus> {
+    const r = await this.get('/api/social/linkedin/member/status')
+    if (!r.ok) return { available: false, connected: false, postsLeftToday: 0, postsPerDay: 2,
+      reason: r.status === 404 ? 'Not available yet.' : r.status === 403 ? 'Needs a paid plan.' : `Unavailable (${r.status}).` }
+    const d = await json<{ connected?: boolean; posts_left_today?: number; posts_per_day?: number }>(r)
+    return { available: true, connected: !!d?.connected, postsLeftToday: d?.posts_left_today ?? 0,
+      postsPerDay: d?.posts_per_day ?? 2 }
+  }
+
+  async shareConnectUrl(): Promise<Outcome & { url?: string }> {
+    const r = await this.get('/api/social/linkedin/member/connect')
+    if (!r.ok) return this.outcome(r, '')
+    const d = await json<{ url?: string }>(r)
+    const url = d?.url || ''
+    // Only ever open LinkedIn's own consent page.
+    return url.startsWith('https://www.linkedin.com/oauth/v2/authorization?')
+      ? { ok: true, message: '', url } : { ok: false, message: 'Unexpected consent link.' }
+  }
+
+  async shareToLinkedIn(text: string, url: string): Promise<Outcome> {
+    return this.outcome(await this.postJson('/api/social/linkedin/member/share', { text, url }),
+      'Shared to LinkedIn.')
   }
 }

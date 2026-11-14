@@ -2,6 +2,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { ago, cleanHandle } from '../api/helpers'
 import type { NetworkClient, People, Planet, Post } from '../api/types'
+import { Composer } from './Composer'
 
 function useLoad<T>(load: () => Promise<T>, deps: unknown[]): { data: T | null; err: string } {
   const [data, setData] = useState<T | null>(null)
@@ -18,9 +19,12 @@ function useLoad<T>(load: () => Promise<T>, deps: unknown[]): { data: T | null; 
 }
 
 export function FeedView({ client }: { client: NetworkClient }) {
-  const { data, err } = useLoad<Post[]>(() => client.feed(), [client])
+  const [reload, setReload] = useState(0)
+  const { data, err } = useLoad<Post[]>(() => client.feed(), [client, reload])
+  const rooms = [...new Set((data || []).map(p => p.channel))]
   return (
     <section className="stack" aria-label="Feed">
+      <Composer client={client} rooms={rooms} onPosted={() => setReload(n => n + 1)} />
       <p className="dim">Posts from the rooms you can read. A Discord forum and its Relay room are one conversation.</p>
       {err && <p className="err">{err}</p>}
       {!data && !err && <p className="dim">Loading…</p>}
@@ -28,7 +32,7 @@ export function FeedView({ client }: { client: NetworkClient }) {
       {data?.map(post => (
         <article key={post.id} className="card post">
           <header><a href={`#/u/${post.author}`}>@{post.author}</a><span className="mono dim"> {post.channel} · {ago(post.timestamp)}</span></header>
-          <p>{post.body}</p>
+          <p className="clamp">{post.body}</p>
         </article>
       ))}
     </section>

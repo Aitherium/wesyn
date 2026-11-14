@@ -119,4 +119,22 @@ export interface NetworkClient {
   planets(): Promise<Planet[]>
   /** Ask to connect. Live: an authenticated POST with the bearer, never ambient credentials. */
   connect(username: string): Promise<{ ok: boolean; message: string }>
+  /** Post to a Relay room (the Discord forum it mirrors is the same conversation). */
+  post(room: string, text: string): Promise<Outcome>
+  /** Opt-in cross-post: is the member's LinkedIn connected, and how many posts are left today. */
+  shareStatus(): Promise<ShareStatus>
+  /** The consent link for the member's own LinkedIn (opened in a new tab). */
+  shareConnectUrl(): Promise<Outcome & { url?: string }>
+  /** One post to the member's own LinkedIn; the server enforces the daily cap. */
+  shareToLinkedIn(text: string, url: string): Promise<Outcome>
+}
+
+export interface Outcome { ok: boolean; message: string }
+
+export interface ShareStatus {
+  available: boolean
+  connected: boolean
+  postsLeftToday: number
+  postsPerDay: number
+  reason?: string
 }
