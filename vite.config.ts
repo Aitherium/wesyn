@@ -6,5 +6,5 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/wesyn/',
   plugins: [react()],
-  test: { environment: 'jsdom' },
+  test: { environment: 'jsdom', css: true },
 })
