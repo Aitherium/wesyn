@@ -2,9 +2,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Served at https://aitherium.github.io/wesyn/ -- every asset path is under /wesyn/.
+// Served at https://wesyn.aitherium.com/ -- assets load from the domain root (public/CNAME).
 export default defineConfig({
-  base: '/wesyn/',
+  base: '/',
   plugins: [react()],
   test: { environment: 'jsdom' },
 })
