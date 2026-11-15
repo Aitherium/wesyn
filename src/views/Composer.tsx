@@ -22,7 +22,7 @@ export function Composer({ client, rooms, onPosted }: {
       const r = await client.post(room, text.trim())
       let msg = r.message
       if (r.ok && alsoShare && canShare) {
-        const s = await client.shareToLinkedIn(text.trim(), 'https://aitherium.github.io/wesyn/')
+        const s = await client.shareToLinkedIn(text.trim(), 'https://wesyn.aitherium.com/')
         msg += ' ' + s.message
         setShare(await client.shareStatus())
       }

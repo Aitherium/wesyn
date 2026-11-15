@@ -9,13 +9,13 @@
 export interface OidcConfig {
   issuer: string         // https://idp.aitherium.com/identity
   clientId: string       // wesyn-pages
-  redirectUri: string    // https://aitherium.github.io/wesyn/
+  redirectUri: string    // https://wesyn.aitherium.com/
 }
 
 export const DEFAULT_OIDC: OidcConfig = {
   issuer: 'https://idp.aitherium.com/identity',
   clientId: 'wesyn-pages',
-  redirectUri: 'https://aitherium.github.io/wesyn/',
+  redirectUri: 'https://wesyn.aitherium.com/',
 }
 
 const K_VERIFIER = 'wesyn.pkce.verifier'

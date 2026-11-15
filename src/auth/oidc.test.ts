@@ -20,7 +20,7 @@ describe('PKCE', () => {
     const url = new URL(await authorizeUrl(DEFAULT_OIDC, new Mem(), '#/people'))
     expect(url.searchParams.get('client_id')).toBe('wesyn-pages')
     expect(url.searchParams.get('code_challenge_method')).toBe('S256')
-    expect(url.searchParams.get('redirect_uri')).toBe('https://aitherium.github.io/wesyn/')
+    expect(url.searchParams.get('redirect_uri')).toBe('https://wesyn.aitherium.com/')
   })
 
   it('refuses a callback whose state this tab did not mint', async () => {

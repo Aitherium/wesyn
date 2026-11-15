@@ -39,7 +39,7 @@ export function ProfileView({ client, username, go }: {
     else if (action.kind === 'edit') window.open('https://app.aitherium.com/spaces/' + encodeURIComponent(p.username), '_blank', 'noopener')
   }
   const copyLink = async () => {
-    const url = `https://aitherium.github.io/wesyn/#/u/${encodeURIComponent(p.username)}`
+    const url = `https://wesyn.aitherium.com/#/u/${encodeURIComponent(p.username)}`
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
