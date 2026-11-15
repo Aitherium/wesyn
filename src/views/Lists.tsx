@@ -31,7 +31,7 @@ export function FeedView({ client }: { client: NetworkClient }) {
       {data?.length === 0 && <p className="dim">Nothing yet in the rooms you can read.</p>}
       {data?.map(post => (
         <article key={post.id} className="card post">
-          <header><a href={`#/u/${post.author}`}>@{post.author}</a><span className="mono dim"> {post.channel} · {ago(post.timestamp)}</span></header>
+          <header><a href={`#/u/${post.author}`}>@{post.author}</a><span className="mono dim" title={new Date(post.timestamp).toLocaleString()}> {post.channel} · {ago(post.timestamp)}</span></header>
           <p className="clamp">{post.body}</p>
         </article>
       ))}
