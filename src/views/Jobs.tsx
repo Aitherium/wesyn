@@ -19,17 +19,6 @@ export interface Job {
   applyUrl: string
 }
 
-/** Fictional sample jobs (every org name ends in "(sample)"; links point at nothing real). */
-export const SAMPLE_JOBS: Job[] = [
-  { id: 'j1', title: 'Platform engineer', org: 'Lantern Works (sample)', world: 'Driftwood Collective (sample)',
-    description: 'Own CI and the build farm. Reproducible builds, flaky-test quarantine, on-call rotation of five.',
-    datePosted: '2026-11-10', validThrough: '2026-12-31', employmentType: 'FULL_TIME', remote: true,
-    country: 'US', applyUrl: 'https://example.invalid/jobs/j1' },
-  { id: 'j2', title: 'Open-source maintainer (charting)', org: 'Tidewater Analytics (sample)', world: 'Driftwood Collective (sample)',
-    description: 'Review PRs, run releases, mentor first-time contributors. Paid part time.',
-    datePosted: '2026-11-08', employmentType: 'PART_TIME', remote: true, applyUrl: 'https://example.invalid/jobs/j2' },
-]
-
 /** schema.org JobPosting for one job (https://schema.org/JobPosting). */
 export function jobPostingLd(j: Job): Record<string, unknown> {
   const ld: Record<string, unknown> = {
@@ -60,8 +49,9 @@ export function jobsLdGraph(jobs: Job[]): string {
 }
 
 export function JobsView({ client }: { client: NetworkClient }) {
-  // Live jobs have no backend yet; the sample board shows the format.
-  const jobs = useMemo(() => (client.mode === 'sample' ? SAMPLE_JOBS : []), [client.mode])
+  // Live jobs have no backend yet. Wesyn never shows fictional jobs (owner, 2026-11-14).
+  void client
+  const jobs = useMemo<Job[]>(() => [], [])
   useEffect(() => {
     const el = document.createElement('script')
     el.type = 'application/ld+json'
@@ -79,8 +69,8 @@ export function JobsView({ client }: { client: NetworkClient }) {
   }
   return (
     <section className="stack" aria-label="Jobs">
-      <p className="dim">Jobs posted in worlds. Each one is published as schema.org JobPosting data, so search engines and other boards can list it. You apply on the poster's own link.</p>
-      {jobs.length === 0 && <p className="dim">No jobs posted in your worlds yet.</p>}
+      <p className="dim">Jobs posted in your worlds. Each one is published as schema.org JobPosting data, so search engines and other boards can list it. You apply on the poster's own link.</p>
+      {jobs.length === 0 && <p className="dim">No jobs posted in your worlds yet. Paid work in Occupy SaaS is on its bounty board in Discord.</p>}
       {jobs.map(j => (
         <article key={j.id} className="card">
           <h2>{j.world}</h2>

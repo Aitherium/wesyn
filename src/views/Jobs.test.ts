@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { SAMPLE_JOBS, jobPostingLd } from './Jobs'
+import { jobPostingLd } from './Jobs'
+import { SAMPLE_JOBS } from './jobs.sample'
 
 describe('JobPosting JSON-LD', () => {
   it('is schema.org JobPosting with the required properties', () => {

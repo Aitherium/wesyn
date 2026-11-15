@@ -44,7 +44,7 @@ export function WorldsView({ client, go }: { client: NetworkClient; go: (h: stri
       {err && <p className="err">{err}</p>}
       {client.mode === 'sample' && <p className="dim">Sign in with Aitherium to see your worlds.</p>}
       {client.mode === 'live' && data?.length === 0 && (
-        <p className="dim">You are not in any world yet. Join one from its Discord with <code>/wesyn join</code>, or create one.</p>
+        <p className="dim">You are not in any world yet. Occupy SaaS is the first connected world; join one from its Discord with <code>/wesyn join</code>, or create one.</p>
       )}
       <ul className="grid">{(client.mode === 'live' ? data : [])?.map(w => (
         <li key={w.slug} className="card">

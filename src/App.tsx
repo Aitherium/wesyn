@@ -1,7 +1,6 @@
 // The shell: mode banner, navigation, sign-in, hash routes. AGPL-3.0-only.
 import { useEffect, useMemo, useState } from 'react'
 import { LiveClient } from './api/live'
-import { SampleClient } from './api/sample'
 import type { NetworkClient, Viewer } from './api/types'
 import { DEFAULT_OIDC, authorizeUrl, handleCallback, readToken, signOut } from './auth/oidc'
 import { FeedView, MessagesView, PeopleView } from './views/Lists'
@@ -10,6 +9,7 @@ import { WorldView } from './views/World'
 import { ProfileView } from './views/Profile'
 import { ImportView } from './views/Import'
 import { JobsView } from './views/Jobs'
+import { WelcomeView } from './views/Welcome'
 
 // Build-time overrides exist ONLY for a local preview (a loopback OIDC client and a dev
 // proxy); the published build uses these defaults.
@@ -23,6 +23,8 @@ const OIDC = {
 /** Where the token and userinfo calls go (a dev proxy in a local preview; else the issuer). */
 const OIDC_API = { ...OIDC, issuer: env.VITE_WESYN_OIDC_API || OIDC.issuer }
 const USERINFO = `${OIDC_API.issuer}/oidc/userinfo`
+
+const KNOWN = new Set(['/', '/people', '/worlds', '/planets', '/messages', '/jobs', '/import'])
 
 /** The pre-2026-11-15 route: `#/planets` is now `#/worlds`. */
 export function legacyRoute(hash: string): string | null {
@@ -69,15 +71,17 @@ export default function App() {
     })
   }, [])
 
-  const client: NetworkClient = useMemo(
-    () => (token ? new LiveClient({ apiBase: API_BASE, userinfoUrl: USERINFO, token }) : new SampleClient()),
+  // Signed out = no client. Wesyn never shows sample people (owner, 2026-11-14).
+  const client: NetworkClient | null = useMemo(
+    () => (token ? new LiveClient({ apiBase: API_BASE, userinfoUrl: USERINFO, token }) : null),
     [token],
   )
   useEffect(() => {
+    if (!client) { setViewer(null); return }
     let live = true
     client.viewer().then(v => {
       if (!live) return
-      if (!v && client.mode === 'live') { signOut(sessionStorage); setToken(null); setAuthErr('Your sign-in expired.') }
+      if (!v) { signOut(sessionStorage); setToken(null); setAuthErr('Your sign-in expired.') }
       setViewer(v)
     }).catch(() => { if (live) setViewer(null) })
     return () => { live = false }
@@ -91,12 +95,6 @@ export default function App() {
   const world = route.startsWith('/w/') ? decodeURIComponent(route.slice(3)) : ''
   return (
     <div className={world ? "shell wide" : "shell"}>
-      {client.mode === 'sample' && (
-        <div className="banner" role="note">
-          <b>Sample data.</b> Every person, server and post here is fictional. Beta.
-          <button className="linkish" onClick={signIn}>Sign in with Aitherium</button> to see your real network.
-        </div>
-      )}
       <header className="top">
         <a className="brand" href="#/">wesyn<span className="beta">beta</span></a>
         <nav aria-label="Sections">
@@ -105,21 +103,21 @@ export default function App() {
           ))}
           {viewer && <a href={`#/u/${viewer.username}`} aria-current={user === viewer.username ? 'page' : undefined}>you</a>}
         </nav>
-        {client.mode === 'live'
+        {client
           ? <button className="ghost" onClick={leave}>Sign out{viewer ? ` @${viewer.username}` : ''}</button>
           : <button className="primary" onClick={signIn}>Sign in with Aitherium</button>}
       </header>
       {authErr && <p className="err" role="alert">{authErr}</p>}
       <main>
-        {user ? <ProfileView client={client} username={user} go={go} me={viewer?.username || ''} />
-          : world ? (client.mode === 'live'
-            ? <WorldView client={client} slug={world} me={viewer?.username || ''} />
-            : <p className="dim">Sign in with Aitherium to open this world.</p>)
+        {!client && route !== '/import' && !(route !== '/' && !KNOWN.has(route) && !user && !world) ? <WelcomeView signIn={signIn} />
+          : user && client ? <ProfileView client={client} username={user} go={go} me={viewer?.username || ''} />
+          : route === '/import' ? <ImportView />
+          : !client ? <p className="err" role="alert">No such page. <a href="#/">Back to the start</a></p>
+          : world ? <WorldView client={client} slug={world} me={viewer?.username || ''} />
           : route === '/people' ? <PeopleView client={client} go={go} />
           : route === '/worlds' ? <WorldsView client={client} go={go} />
           : route === '/messages' ? <MessagesView client={client} />
           : route === '/jobs' ? <JobsView client={client} />
-          : route === '/import' ? <ImportView />
           : route === '/' ? <FeedView client={client} />
           : <p className="err" role="alert">No such page. <a href="#/">Back to the feed</a></p>}
       </main>
