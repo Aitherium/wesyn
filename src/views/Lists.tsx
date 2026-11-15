@@ -70,10 +70,10 @@ export function PeopleView({ client, go }: { client: NetworkClient; go: (h: stri
 export function PlanetsView({ client }: { client: NetworkClient }) {
   const { data, err } = useLoad<Planet[]>(() => client.planets(), [client])
   return (
-    <section className="stack" aria-label="Planets">
-      <p className="dim">A planet is a community you belong to: a workspace, and the Discord server bound to it.</p>
+    <section className="stack" aria-label="Worlds">
+      <p className="dim">A world is a community you belong to: a workspace, and the Discord server bound to it.</p>
       {err && <p className="err">{err}</p>}
-      {data?.length === 0 && <p className="dim">You are not on any planet yet. Join one from its Discord with <code>/wesyn join</code>.</p>}
+      {data?.length === 0 && <p className="dim">You are not in any world yet. Occupy SaaS is the first connected world; join one from its Discord with <code>/wesyn join</code>.</p>}
       <ul className="grid">{data?.map(p => (
         <li key={p.id} className="card">
           <h2>{p.name}</h2>

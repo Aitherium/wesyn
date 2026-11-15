@@ -15,4 +15,17 @@ describe('App routing', () => {
     act(() => { root.unmount() })
     document.body.removeChild(container)
   })
+
+  it('signed out, shows the welcome and the first connected world, never sample people', () => {
+    window.location.hash = '#/'
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const root = createRoot(container)
+    act(() => { root.render(<App />) })
+    expect(container.textContent).toContain('Occupy SaaS')
+    expect(container.textContent).not.toContain('(sample)')
+    expect(container.textContent).not.toMatch(/planet/i)
+    act(() => { root.unmount() })
+    document.body.removeChild(container)
+  })
 })
