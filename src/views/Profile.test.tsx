@@ -28,7 +28,7 @@ describe('ProfileView copy link', () => {
     await act(async () => { btn!.click() })
     await act(async () => { await new Promise(r => setTimeout(r, 50)) })
 
-    expect(writeText).toHaveBeenCalledWith('https://aitherium.github.io/wesyn/#/u/rowan')
+    expect(writeText).toHaveBeenCalledWith('https://wesyn.aitherium.com/#/u/rowan')
     const copiedBtn = Array.from(container.querySelectorAll('button')).find(b => b.textContent === 'Copied!')
     expect(copiedBtn).toBeTruthy()
 

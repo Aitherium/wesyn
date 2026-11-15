@@ -38,7 +38,7 @@ Discord server (planet)                         Aitherium
 
 "Sign in with Aitherium" is OIDC authorization code with PKCE (S256) against
 `idp.aitherium.com/identity`. The client `wesyn-pages` is public (no secret), PKCE is
-mandatory, and its only callback is `https://aitherium.github.io/wesyn/`. The access
+mandatory, and its only callback is `https://wesyn.aitherium.com/`. The access
 token is kept in `sessionStorage` for the tab and sent only as a bearer header.
 
 A Discord member links their Discord account to their Aitherium account once

@@ -4,7 +4,7 @@
 communities ("planets"), a feed and messages, with Aither built in, running on the
 open-source Occupy SaaS apps. Licensed AGPL-3.0.
 
-- **Demo:** https://aitherium.github.io/wesyn/ (sample data: every person, server and
+- **Demo:** https://wesyn.aitherium.com/ (sample data: every person, server and
   post in it is fictional and labelled `(sample)`).
 - **Sign in with Aitherium** on the demo to switch to your real network.
 - **Join from Discord:** `/wesyn join` in the Aitherium Discord makes your profile and
@@ -27,11 +27,11 @@ Wesyn is in beta. Expect rough edges and missing pieces; the issues list says wh
 ```
  browser (this app, static on GitHub Pages)
    |  1. "Sign in with Aitherium": OIDC code + PKCE (S256), public client `wesyn-pages`
-   |     -> idp.aitherium.com/identity/oidc/authorize -> back to /wesyn/?code&state
+   |     -> idp.aitherium.com/identity/oidc/authorize -> back to /?code&state
    |     -> POST /oidc/token with the verifier -> access token (sessionStorage, this tab)
    |  2. every read: Authorization: Bearer <token>, credentials: 'omit'
    v
- api.aitherium.com/api/*  (non-credentialed CORS for github.io origins)
+ api.aitherium.com/api/*  (non-credentialed CORS for this app's origin)
    |-- /myspace/{user}            the member's Space; 403 when this viewer may not see it
    |-- /myspace/{user}/standing   earned community standing, OAuth-proved GitHub, connections
    |-- /myspace/network/planets   the viewer's own workspaces and their Discord servers
@@ -40,7 +40,7 @@ Wesyn is in beta. Expect rough edges and missing pieces; the issues list says wh
 ```
 
 The page holds no secret. The IdP accepts exactly one callback for this client,
-`https://aitherium.github.io/wesyn/`; a fork on another Pages origin cannot obtain a
+`https://wesyn.aitherium.com/`; a fork on another Pages origin cannot obtain a
 token for it, and should register its own client.
 
 Without a token the app uses `SampleClient` (`src/api/sample.ts`). With one it uses
@@ -53,7 +53,7 @@ More: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). LinkedIn interop (sign-in, i
 
 ```bash
 npm ci
-npm run dev        # http://localhost:5173/wesyn/ (sample mode)
+npm run dev        # http://localhost:5173/ (sample mode)
 npm test
 npm run build
 ```
