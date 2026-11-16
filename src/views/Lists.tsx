@@ -21,15 +21,26 @@ function useLoad<T>(load: () => Promise<T>, deps: unknown[]): { data: T | null; 
 export function FeedView({ client }: { client: NetworkClient }) {
   const [reload, setReload] = useState(0)
   const { data, err } = useLoad<Post[]>(() => client.feed(), [client, reload])
+  const [room, setRoom] = useState<string | null>(null)
   const rooms = [...new Set((data || []).map(p => p.channel))]
+  const posts = data ? (room ? data.filter(p => p.channel === room) : data) : null
   return (
     <section className="stack" aria-label="Feed">
       <Composer client={client} rooms={rooms} onPosted={() => setReload(n => n + 1)} />
       <p className="dim">Posts from the rooms you can read. A Discord forum and its Relay room are one conversation.</p>
       {err && <p className="err">{err}</p>}
       {!data && !err && <p className="dim">Loading…</p>}
+      {data && data.length > 0 && (
+        <ul className="chips" aria-label="Filter by room">
+          <li><button type="button" className={room === null ? 'primary' : 'link'} onClick={() => setRoom(null)}>all</button></li>
+          {rooms.map(r => (
+            <li key={r}><button type="button" className={room === r ? 'primary' : 'link'} onClick={() => setRoom(r)}>{r}</button></li>
+          ))}
+        </ul>
+      )}
       {data?.length === 0 && <p className="dim">Nothing yet in the rooms you can read.</p>}
-      {data?.map(post => (
+      {posts?.length === 0 && data && data.length > 0 && <p className="dim">No posts in this room.</p>}
+      {posts?.map(post => (
         <article key={post.id} className="card post">
           <header><a href={`#/u/${post.author}`}>@{post.author}</a><span className="mono dim"> {post.channel} · {ago(post.timestamp)}</span></header>
           <p className="clamp">{post.body}</p>
