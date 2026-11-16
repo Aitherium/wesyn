@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SAMPLE_FEED, SAMPLE_PEOPLE, SAMPLE_PLANETS, SAMPLE_PROFILES, SampleClient } from './sample'
+import { SAMPLE_FEED, SAMPLE_PEOPLE, SAMPLE_WORLDS, SAMPLE_PROFILES, SampleClient } from './sample'
 
 describe('sample data', () => {
   it('every person is labelled (sample)', () => {
@@ -9,7 +9,16 @@ describe('sample data', () => {
       ...Object.values(SAMPLE_PROFILES).flatMap(p => p.connections.people.map(c => c.displayName)),
     ]
     for (const n of names) expect(n).toMatch(/\(sample\)$/)
-    for (const p of SAMPLE_PLANETS) expect(p.name).toMatch(/\(sample\)/)
+    for (const p of SAMPLE_WORLDS) expect(p.name).toMatch(/\(sample\)/)
+  })
+
+  it('signed out, a world shows nothing invented', async () => {
+    const w = new SampleClient().world
+    await expect(w.open()).rejects.toThrow(/Sign in/)
+    expect(await w.boards()).toEqual([])
+    expect(await w.chat()).toEqual([])
+    expect((await w.osint('news', 'Baltic')).items).toEqual([])
+    expect((await w.reply()).ok).toBe(false)
   })
 
   it('links point at nothing real', () => {

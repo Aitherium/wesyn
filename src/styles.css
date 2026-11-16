@@ -71,3 +71,21 @@ textarea { width: 100%; resize: vertical; margin-bottom: 10px; }
 .row.wrap { flex-wrap: wrap; align-items: center; }
 .check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--dim); flex: 1; min-width: 200px; }
 .clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+/* Worlds: forum + chat beside the copilot and the OSINT panel on a wide screen. */
+.world-grid { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) {
+  .shell.wide { max-width: 1180px; }
+  .world-grid { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; }
+}
+.row input, .row select, .stack textarea { flex: 1; min-width: 0; }
+textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--hair); border-radius: 8px; padding: 8px 10px; }
+.chat li { overflow-wrap: anywhere; }
+.turns { list-style: none; margin: 10px 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.turns .step { font-size: 11px; overflow-wrap: anywhere; }
+.turns .answer { white-space: pre-wrap; margin: 4px 0; }
+.draft { border-color: var(--accent); margin: 8px 0; }
+.ok { color: var(--ok); }
+.osint-map { width: 100%; height: auto; margin: 10px 0 4px; border-radius: 8px; }
+.osint-map .sea { fill: var(--bg); stroke: var(--hair); }
+.osint-map .grid { stroke: var(--hair); stroke-width: .4; }
+.osint-map .dot { fill: var(--accent); }

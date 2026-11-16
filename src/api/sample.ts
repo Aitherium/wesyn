@@ -6,8 +6,9 @@
 //   * one profile is private, so the demo shows what a private Space looks like:
 //     the word "private" and nothing else.
 import type {
-  NetworkClient, People, Person, Planet, Post, Profile, ProfileResult, Viewer,
+  NetworkClient, People, Person, Post, Profile, ProfileResult, Viewer, World,
 } from './types'
+import { SignedOutWorlds } from './worlds-signed-out'
 
 const p = (username: string, name: string): Person => ({ username, displayName: `${name} (sample)` })
 
@@ -28,7 +29,7 @@ const base = (who: Person, extra: Partial<Profile>): Profile => ({
 
 export const SAMPLE_PROFILES: Record<string, Profile> = {
   rowan: base(ROWAN, {
-    headline: 'Platform engineer · runs the build farm for two planets',
+    headline: 'Platform engineer · runs the build farm for two worlds',
     bio: 'I keep CI green and on-call quiet. Ask me about reproducible builds and flaky tests.',
     github: { login: 'rowan-sample', url: 'https://example.invalid/rowan-sample', verified: true,
       mergedPrs: 214 },
@@ -99,11 +100,14 @@ export const SAMPLE_FEED: Post[] = [
     body: 'My first merged PR! A docs fix, but it counts.' },
 ]
 
-export const SAMPLE_PLANETS: Planet[] = [
-  { id: 'p1', name: 'Driftwood Collective (sample)', role: 'maintainer',
+export const SAMPLE_WORLDS: World[] = [
+  { id: 'p1', slug: 'driftwood', name: 'Driftwood Collective (sample)', role: 'maintainer',
     discord: ['Driftwood (sample server)'], members: 412 },
-  { id: 'p2', name: 'Lantern Works (sample)', role: 'member', discord: [], members: 38 },
+  { id: 'p2', slug: 'lantern', name: 'Lantern Works (sample)', role: 'member', discord: [], members: 38 },
 ]
+
+/** @deprecated The pre-2026-11-15 name; kept for one release. */
+export const SAMPLE_PLANETS = SAMPLE_WORLDS
 
 export const SAMPLE_PEOPLE: People = {
   connections: [MIRA, TEO, SAGE],
@@ -112,6 +116,7 @@ export const SAMPLE_PEOPLE: People = {
 
 export class SampleClient implements NetworkClient {
   readonly mode = 'sample' as const
+  readonly world = new SignedOutWorlds()
   async viewer() { return SAMPLE_VIEWER }
   async profile(username: string): Promise<ProfileResult> {
     if (SAMPLE_PRIVATE.has(username)) return { gate: 'private' }
@@ -120,7 +125,7 @@ export class SampleClient implements NetworkClient {
   }
   async feed() { return SAMPLE_FEED }
   async people() { return SAMPLE_PEOPLE }
-  async planets() { return SAMPLE_PLANETS }
+  async worlds() { return SAMPLE_WORLDS }
   async connect() {
     return { ok: false, message: 'This is the sample demo. Sign in with Aitherium to connect for real.' }
   }

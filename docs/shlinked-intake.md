@@ -12,7 +12,7 @@ text; GitHub's licence detection reports none). Last push 2024-04-22. Read on
 | Hosting | a Phoenix server + Postgres | a static demo on GitHub Pages, plus the existing Aitherium backend |
 | Accounts | its own email/password accounts (`accounts/`) | "Sign in with Aitherium" only, no second auth system |
 | Content | satire is built into the schema (points currency, "life score", interns, jabs, ads) | serious, earned standing |
-| Communities | groups inside the app | Discord servers as planets, mirrored to Relay |
+| Communities | groups inside the app | Discord servers as worlds, mirrored to Relay |
 
 Forking would have meant standing up a new runtime, a second account system and a
 Postgres schema, then removing the joke mechanics from it. Porting the model let the
@@ -32,7 +32,7 @@ signed-in demo work on the backend that already exists. Credit is in `NOTICE` an
 | `profiles/jab.ex`, `interns`, `ads`, `points`, `awards` | REJECT | satire mechanics |
 | `profiles/notification.ex` | REFERENCE | notifications are a later issue |
 | `timeline/post.ex` | ADAPT | body, author, time -> `Post`; posts live in Relay rooms mirrored with Discord |
-| `groups` | ADAPT | -> `Planet` (a workspace bound to a Discord server) |
+| `groups` | ADAPT | -> `World` (a workspace bound to a Discord server; `Planet` until 2026-11-15) |
 | `chat` | REFERENCE | DMs live in AitherRelay, mirrored to Discord |
 | `accounts` | REJECT | replaced by Aitherium OIDC |
 | `moderation` | REFERENCE | moderation is server-side in Aitherium |

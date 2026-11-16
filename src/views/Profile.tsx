@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { profileAction } from '../api/helpers'
 import { loadImport } from './Import'
 import type { NetworkClient, Profile as P, ProfileResult } from '../api/types'
+import { Copilot, PROFILE_PLACE } from '../copilot/Copilot'
 
 const GATE_TEXT: Record<string, string> = {
   private: 'This profile is private.',
@@ -11,8 +12,8 @@ const GATE_TEXT: Record<string, string> = {
   error: 'Could not load this profile.',
 }
 
-export function ProfileView({ client, username, go }: {
-  client: NetworkClient; username: string; go: (hash: string) => void
+export function ProfileView({ client, username, go, me = '' }: {
+  client: NetworkClient; username: string; go: (hash: string) => void; me?: string
 }) {
   const [res, setRes] = useState<ProfileResult | null>(null)
   const [note, setNote] = useState('')
@@ -86,6 +87,7 @@ export function ProfileView({ client, username, go }: {
           <li key={c.username}><a href={`#/u/${c.username}`}>{c.displayName}</a></li>
         ))}</ul>
       </section>
+      {client.mode === 'live' && <Copilot world={{ ...PROFILE_PLACE, name: `@${p.username}'s profile` }} client={client.world} me={me} />}
     </article>
   )
 }

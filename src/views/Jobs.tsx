@@ -8,7 +8,7 @@ export interface Job {
   id: string
   title: string
   org: string
-  planet: string
+  world: string
   description: string
   datePosted: string          // YYYY-MM-DD
   validThrough?: string
@@ -73,7 +73,7 @@ export function JobsView({ client }: { client: NetworkClient }) {
       {jobs.length === 0 && <p className="dim">No jobs posted in your worlds yet. Paid work in Occupy SaaS is on its bounty board in Discord.</p>}
       {jobs.map(j => (
         <article key={j.id} className="card">
-          <h2>{j.planet}</h2>
+          <h2>{j.world}</h2>
           <p><b>{j.title}</b> · {j.org}</p>
           <p className="mono dim">{j.employmentType.replace('_', ' ').toLowerCase()} · {j.remote ? 'remote' : j.locality} · posted {j.datePosted}</p>
           <p>{j.description}</p>

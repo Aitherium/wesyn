@@ -85,13 +85,33 @@ export interface Post {
   timestamp: string
 }
 
-export interface Planet {
+/**
+ * A world: a community you belong to. It IS one AitherRelay workspace (its channels plus
+ * a forum board), and the Discord server bound to it mirrors into those same rooms.
+ * Called a "planet" until 2026-11-15.
+ */
+export interface World {
   id: string
+  /** The Relay workspace slug: the world's address (`#/w/<slug>`). */
+  slug: string
   name: string
   role: string
   discord: string[]
   members?: number
+  settings?: WorldSettings
 }
+
+/** @deprecated The pre-2026-11-15 name of {@link World}; kept for one release. */
+export type Planet = World
+
+export interface WorldSettings {
+  /** The world's region or topic for its read-only OSINT panel (ShadowBroker). */
+  osint?: { query: string; label: string }
+  /** Sites and agents pinned into the world (the Studio pins them here). */
+  pinned?: Pinned[]
+}
+
+export interface Pinned { kind: 'site' | 'agent'; title: string; url: string }
 
 export interface ConnectionRequest {
   id: string
@@ -116,7 +136,9 @@ export interface NetworkClient {
   profile(username: string): Promise<ProfileResult>
   feed(): Promise<Post[]>
   people(): Promise<People>
-  planets(): Promise<Planet[]>
+  worlds(): Promise<World[]>
+  /** One world's rooms, forum and panels. */
+  readonly world: WorldClient
   /** Ask to connect. Live: an authenticated POST with the bearer, never ambient credentials. */
   connect(username: string): Promise<{ ok: boolean; message: string }>
   /** Post to a Relay room (the Discord forum it mirrors is the same conversation). */
@@ -137,4 +159,73 @@ export interface ShareStatus {
   postsLeftToday: number
   postsPerDay: number
   reason?: string
+}
+
+export interface ForumBoard { id: string; name: string; description: string; threadCount: number }
+
+export interface ForumThread {
+  id: string
+  boardId: string
+  title: string
+  author: string
+  replies: number
+  updatedAt: string
+  pinned: boolean
+  locked: boolean
+}
+
+export interface ForumPost { id: string; author: string; body: string; createdAt: string; agent: boolean }
+
+export interface ChatLine { id: string; author: string; body: string; timestamp: string }
+
+export interface WorldDetail {
+  slug: string
+  name: string
+  description: string
+  role: string
+  /** Relay rooms of this world, e.g. `#driftwood-general`. */
+  channels: string[]
+  settings: WorldSettings
+  /** False when this Relay does not keep world settings yet (an older backend). */
+  settingsStored: boolean
+}
+
+export interface OsintItem {
+  title: string
+  summary: string
+  source: string
+  link?: string
+  time: string
+  lat?: number
+  lng?: number
+  type?: string
+}
+
+export interface OsintResult {
+  query: string
+  items: OsintItem[]
+  notice: string
+  /** The board and its software licence, shown beside every panel. */
+  board: string
+  software: string
+  license: string
+  error?: string
+}
+
+/** A world's rooms, forum and OSINT panel, as the signed-in member. */
+export interface WorldClient {
+  create(name: string, slug: string): Promise<Outcome & { slug?: string }>
+  open(slug: string): Promise<WorldDetail>
+  boards(slug: string): Promise<ForumBoard[]>
+  threads(slug: string, boardId: string): Promise<ForumThread[]>
+  thread(slug: string, threadId: string): Promise<{ thread: ForumThread; posts: ForumPost[] }>
+  search(slug: string, query: string): Promise<ForumThread[]>
+  startThread(slug: string, boardId: string, title: string, body: string): Promise<Outcome & { id?: string }>
+  reply(slug: string, threadId: string, body: string): Promise<Outcome>
+  chat(channel: string): Promise<ChatLine[]>
+  say(channel: string, text: string): Promise<Outcome>
+  saveSettings(slug: string, settings: WorldSettings): Promise<Outcome>
+  osint(kind: 'news' | 'telemetry', query: string): Promise<OsintResult>
+  /** A Relay direct message to one member. */
+  message(to: string, text: string): Promise<Outcome>
 }

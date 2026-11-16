@@ -1,7 +1,7 @@
-// Feed, people, planets, messages. AGPL-3.0-only.
+// Feed, people, messages (worlds: Worlds.tsx). AGPL-3.0-only.
 import { useEffect, useState, type FormEvent } from 'react'
 import { ago, cleanHandle } from '../api/helpers'
-import type { NetworkClient, People, Planet, Post } from '../api/types'
+import type { NetworkClient, People, Post } from '../api/types'
 import { Composer } from './Composer'
 
 function useLoad<T>(load: () => Promise<T>, deps: unknown[]): { data: T | null; err: string } {
@@ -63,24 +63,6 @@ export function PeopleView({ client, go }: { client: NetworkClient; go: (h: stri
           <li key={c.username}><a href={`#/u/${c.username}`}>{c.displayName}</a> <span className="mono dim">@{c.username}</span></li>
         ))}</ul>
       </div>
-    </section>
-  )
-}
-
-export function PlanetsView({ client }: { client: NetworkClient }) {
-  const { data, err } = useLoad<Planet[]>(() => client.planets(), [client])
-  return (
-    <section className="stack" aria-label="Worlds">
-      <p className="dim">A world is a community you belong to: a workspace, and the Discord server bound to it.</p>
-      {err && <p className="err">{err}</p>}
-      {data?.length === 0 && <p className="dim">You are not in any world yet. Occupy SaaS is the first connected world; join one from its Discord with <code>/wesyn join</code>.</p>}
-      <ul className="grid">{data?.map(p => (
-        <li key={p.id} className="card">
-          <h2>{p.name}</h2>
-          <p className="mono dim">{p.role}{p.members !== undefined ? ` · ${p.members} members` : ''}</p>
-          {p.discord.length > 0 && <p className="dim">Discord: {p.discord.join(', ')}</p>}
-        </li>
-      ))}</ul>
     </section>
   )
 }

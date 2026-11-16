@@ -9,5 +9,13 @@ licensed under the GNU Affero General Public License, version 3. Wesyn ports the
 shape of that model to TypeScript; it does not copy ShlinkedIn's Elixir source,
 its satire content or its joke mechanics. See docs/shlinked-intake.md.
 
+The world OSINT panel shows rows from the ShadowBroker board
+(https://github.com/wizzense/Shadowbroker, AGPL-3.0) through Aitherium's public read
+API; each row keeps its own source link.
+
+The optional in-tab copilot loads Aitherium's Bonsai runtime from aitherium.com at run
+time. That runtime is separately licensed and is not part of this repository or this
+licence; see docs/ARCHITECTURE.md ("The copilot").
+
 "Wesyn" and the Wesyn mark are not licensed under the AGPL. Forks are welcome under
 the licence; please give them a different name.

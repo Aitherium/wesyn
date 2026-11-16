@@ -7,9 +7,10 @@
 // never a cached card, a directory row or a guess.
 import { mergeFeed, pickFeedChannels, plainText, profileGate, type RelayChannel } from './helpers'
 import type {
-  CommunityStanding, NetworkClient, Outcome, People, Planet, Post, Profile, ProfileResult,
-  Relationship, ShareStatus, Viewer,
+  CommunityStanding, NetworkClient, Outcome, People, Post, Profile, ProfileResult,
+  Relationship, ShareStatus, Viewer, World, WorldClient, WorldSettings,
 } from './types'
+import { LiveWorlds } from './worlds-live'
 
 export interface LiveConfig {
   apiBase: string        // https://api.aitherium.com
@@ -80,9 +81,36 @@ export function toProfile(username: string, config: unknown, st: StandingBody | 
   }
 }
 
+type WorldRow = { workspace_id?: string; slug?: string; name: string; role: string;
+  discord?: { name: string }[] }
+
+/** The member's worlds: their workspaces (with Discord) joined with their Relay workspaces by slug. */
+export function mergeWorlds(rows: WorldRow[], relay: Array<{ id?: string; slug: string; name: string; role: string;
+  member_count?: number; world?: WorldSettings }>): World[] {
+  const out = new Map<string, World>()
+  for (const p of rows) {
+    const slug = p.slug || p.workspace_id || ''
+    out.set(slug, { id: p.workspace_id || slug, slug, name: p.name, role: p.role,
+      discord: (p.discord || []).map(d => d.name) })
+  }
+  for (const w of relay) {
+    const known = out.get(w.slug)
+    out.set(w.slug, { ...(known || { id: w.id || w.slug, slug: w.slug, name: w.name, role: w.role, discord: [] }),
+      members: w.member_count, settings: w.world })
+  }
+  return [...out.values()]
+}
+
 export class LiveClient implements NetworkClient {
   readonly mode = 'live' as const
-  constructor(private cfg: LiveConfig, private f: Fetch = fetch.bind(globalThis)) {}
+  readonly world: WorldClient
+  private me?: Promise<string>
+  constructor(private cfg: LiveConfig, private f: Fetch = fetch.bind(globalThis)) {
+    this.world = new LiveWorlds(cfg.apiBase, cfg.token, f, () => {
+      this.me ||= this.viewer().then(v => v?.username || '')
+      return this.me
+    })
+  }
 
   private get(path: string): Promise<Response> {
     return this.f(this.cfg.apiBase + path, {
@@ -152,14 +180,18 @@ export class LiveClient implements NetworkClient {
     }
   }
 
-  async planets(): Promise<Planet[]> {
-    const r = await this.get('/api/myspace/network/planets')
-    if (r.status === 404) return []   // the backend has not shipped planets yet
-    if (!r.ok) throw new Error(`Planets answered ${r.status}`)
-    const rows = (await json<{ planets?: Array<{ workspace_id: string; name: string; role: string;
-      discord?: { name: string }[] }> }>(r))?.planets || []
-    return rows.map(p => ({ id: p.workspace_id, name: p.name, role: p.role,
-      discord: (p.discord || []).map(d => d.name) }))
+  async worlds(): Promise<World[]> {
+    // `/network/worlds` since 2026-11-15; an older backend only has `/network/planets`.
+    let r = await this.get('/api/myspace/network/worlds')
+    if (r.status === 404) r = await this.get('/api/myspace/network/planets')
+    let rows: WorldRow[] = []
+    if (r.ok) {
+      const d = await json<{ worlds?: WorldRow[]; planets?: WorldRow[] }>(r)
+      rows = d?.worlds || d?.planets || []
+    } else if (r.status !== 404) throw new Error(`Worlds answered ${r.status}`)
+    const rw = await this.get('/api/relay/v1/workspaces')
+    const relay = rw.ok ? (await json<{ workspaces?: [] }>(rw))?.workspaces || [] : []
+    return mergeWorlds(rows, relay)
   }
 
   async connect(username: string): Promise<{ ok: boolean; message: string }> {

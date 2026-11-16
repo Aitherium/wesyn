@@ -1,7 +1,7 @@
 # Wesyn (beta)
 
 **The open network where reputation is earned.** Profiles, earned standing, connections,
-communities ("planets"), a feed and messages, with Aither built in, running on the
+communities ("worlds"), a feed and messages, with Aither built in, running on the
 open-source Occupy SaaS apps. Licensed AGPL-3.0.
 
 - **Demo:** https://wesyn.aitherium.com/ (sample data: every person, server and
@@ -18,7 +18,7 @@ Wesyn is in beta. Expect rough edges and missing pieces; the issues list says wh
 |---|---|
 | Reputation | Earned in communities (shipped work, reviews, badges). Nobody types their own. |
 | GitHub | Shown only when PROVED by signing in with GitHub, never a typed handle. |
-| Communities | Each Discord server is a planet. Discord is the primary backend; AitherRelay and IRC mirror it so the network keeps working when Discord is down. |
+| Communities | Each Discord server is a world: its Relay rooms and forum board, with an optional OSINT panel and the in-tab copilot. Discord is the primary backend; AitherRelay and IRC mirror it so the network keeps working when Discord is down. |
 | Privacy | The server decides. A private profile shows the word "private" and nothing else. |
 | Code | AGPL-3.0. Run it, fork it, self-host it. |
 

@@ -1,7 +1,7 @@
 # Wesyn: ground truth for every coding agent
 
 Wesyn is the open network where reputation is earned: profiles, earned standing,
-connections, planets (communities), feed and messages, as a static web app that reads
+connections, worlds (communities), feed and messages, as a static web app that reads
 the Aitherium backend as the signed-in member. Humans read `CONTRIBUTING.md`; the rules
 are the same. This file is harness-neutral; Claude Code reads it through `CLAUDE.md`.
 
