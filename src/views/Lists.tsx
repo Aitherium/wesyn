@@ -42,7 +42,11 @@ export function FeedView({ client }: { client: NetworkClient }) {
 export function PeopleView({ client, go }: { client: NetworkClient; go: (h: string) => void }) {
   const { data, err } = useLoad<People>(() => client.people(), [client])
   const [draft, setDraft] = useState('')
+  const [filter, setFilter] = useState('')
   const open = (e: FormEvent) => { e.preventDefault(); const h = cleanHandle(draft); if (h) go(`#/u/${h}`) }
+  const q = filter.trim().toLowerCase()
+  const connections = (data?.connections ?? []).filter(c =>
+    !q || c.displayName.toLowerCase().includes(q) || c.username.toLowerCase().includes(q))
   return (
     <section className="stack" aria-label="People">
       <form className="row" onSubmit={open}>
@@ -57,9 +61,11 @@ export function PeopleView({ client, go }: { client: NetworkClient; go: (h: stri
           ))}</ul>
         </div>
       )}
-      <div className="card"><h2>Connections · {data?.connections.length ?? 0}</h2>
+      <div className="card"><h2>Connections · {connections.length}</h2>
+        <input aria-label="Filter connections" placeholder="Filter by name or handle" value={filter} onChange={e => setFilter(e.target.value)} />
         {data?.connections.length === 0 && <p className="dim">No connections yet. Open a profile to connect.</p>}
-        <ul className="rows">{data?.connections.map(c => (
+        {data && connections.length === 0 && data.connections.length > 0 && <p className="dim">No matches.</p>}
+        <ul className="rows">{connections.map(c => (
           <li key={c.username}><a href={`#/u/${c.username}`}>{c.displayName}</a> <span className="mono dim">@{c.username}</span></li>
         ))}</ul>
       </div>
