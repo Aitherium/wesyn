@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { profileAction } from '../api/helpers'
 import { loadImport } from './Import'
+import { ProfileSkeleton } from './ProfileSkeleton'
 import type { NetworkClient, Profile as P, ProfileResult } from '../api/types'
 import { Copilot, PROFILE_PLACE } from '../copilot/Copilot'
 
@@ -26,7 +27,7 @@ export function ProfileView({ client, username, go, me = '' }: {
     return () => { live = false }
   }, [client, username])
 
-  if (!res) return <p className="dim">Loading…</p>
+  if (!res) return <ProfileSkeleton />
   // A gate other than ok shows ONE line and nothing else about the member.
   if (res.gate !== 'ok') return <p className="gate" role="status">{GATE_TEXT[res.gate]}</p>
   const p = res.profile
