@@ -24,6 +24,17 @@ const OIDC = {
 const OIDC_API = { ...OIDC, issuer: env.VITE_WESYN_OIDC_API || OIDC.issuer }
 const USERINFO = `${OIDC_API.issuer}/oidc/userinfo`
 
+/** The sibling domains, the same list aitherium.com and aitherium.org render.
+ *  Names only. Measured 2026-11-24; aionyn.com has no usable TLS certificate yet,
+ *  so its link is the subdomain that serves. */
+const FAMILY_SITES: ReadonlyArray<readonly [string, string]> = [
+  ['aitherium.com', 'https://aitherium.com/'],
+  ['aitherium.org', 'https://aitherium.org/'],
+  ['openaw.org', 'https://www.openaw.org/'],
+  ['aionyn', 'https://aionyn.aitherium.com/'],
+  ['eusyra.com', 'https://eusyra.com/'],
+]
+
 const KNOWN = new Set(['/', '/people', '/worlds', '/planets', '/messages', '/jobs', '/import'])
 
 /** The pre-2026-11-15 route: `#/planets` is now `#/worlds`. */
@@ -123,6 +134,15 @@ export default function App() {
       </main>
       <footer className="foot">
         Open source (AGPL-3.0) · <a href="https://github.com/Aitherium/wesyn">github.com/Aitherium/wesyn</a> · Join from Discord with <code>/wesyn join</code>
+        <span className="family">
+          {' · the family: '}
+          {FAMILY_SITES.map(([name, href], index) => (
+            <span key={href}>
+              {index > 0 ? ' · ' : null}
+              <a href={href} rel="noopener noreferrer">{name}</a>
+            </span>
+          ))}
+        </span>
       </footer>
     </div>
   )
